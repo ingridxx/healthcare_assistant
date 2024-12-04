@@ -1,0 +1,32 @@
+data:
+  vitals:
+    patient_id:
+      type: int
+      min: 1
+      max: 1000 
+    timestamp:
+      type: timestamp
+    heart_rate:
+      type: int
+      min: 60
+      max: 100
+    blood_pressure:
+      type: choice
+      values:
+        - "120/80"
+        - "130/85"
+        - "140/90"
+        - "110/70"
+        - "150/95"
+    glucose_level:
+      type: int
+      min: 70
+      max: 180 
+    activity_level:
+      type: choice
+      values:
+        - "sedentary"
+        - "light"
+        - "moderate"
+        - "active"
+        - "very active" 

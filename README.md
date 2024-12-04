@@ -96,15 +96,25 @@ python main.py
 ```
 
 ## Usage
-Start a conversation via the terminal. Example:
+Start a conversation via the terminal. 
+Example:
 ```
-You: Hey, EVI.
-Assistant: Hey there! You sound a bit down and tired? Let me check on your current health status to better understand how you're feeling.
-Tool calls (e.g., get_health_metrics) fetch user-specific health insights and provide personalized advice.
+You:
+Hey, EVI. I’m not feeling too well at the moment.
+
+EVI:
+I’m sorry to hear that. Let me check on your health metrics to see how you’re doing physically.
+
+(calls the `fetch_health_metrics` tool to fetch real-time vitals data from SingleStore)
+
+EVI:
+I noticed your average heart rate in the last hour has been 92 bpm, which is quite elevated compared to your usual baseline. Your glucose level is at 145 mg/dL, which is also on the higher side.
+
+Stress can sometimes affect your heart rate and glucose levels. How about trying a short breathing exercise to help you relax?
 ```
 
 ## Next Steps
-A few opportunities to expand the functionality of Empathic Health Companion around real-time healthcare insights:
+There are definitely opportunities to expand the functionality of Empathic Health Companion around real-time healthcare insights! Here are some of them:
 
 ### Correlation Analysis:
 - Analyze relationships between detected emotions and health metrics.
