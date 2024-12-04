@@ -1,12 +1,12 @@
 # Empathic Health Assistant
-Empathic Health Companion is a real-time healthcare assistant that leverages Hume AI's advanced emotional intelligence and SingleStore's high-performance database capabilities. The application processes user interactions and biometric data in real-time to provide personalized healthcare insights with an empathic touch.
+Empathic Health Companion is a real-time healthcare assistant that leverages Hume AI's Empathic Voice Interface (EVI 2) and SingleStore's high-performance database capabilities. The application processes user interactions and biometric data in real-time to provide personalized healthcare insights with an empathic touch.
 
 ## Features
 - **Real-Time Interaction**: Supports live conversations powered by Hume AI's Empathic Voice Interface (EVI 2).
 - **Emotional Awareness**: Detects and analyzes emotional cues to provide contextually relevant responses.
 - **Health Data Integration**: Fetches and correlates real-time biometric data (e.g., heart rate, glucose levels) from SingleStore.
 - **Kafka Integration**: Streams real-time biometric data into SingleStore.
-- **Custom Tool Call**: Implements the fetch_health_metrics tool to dynamically retrieve and analyze user health metrics
+- **Custom Tool Call**: Implements the `fetch_health_metrics` tool to dynamically retrieve and analyze user health metrics
 - **Database-Driven Insights**: Utilizes SingleStore for low-latency queries and real-time data ingestion.
 
 ## Architecture
@@ -47,6 +47,36 @@ CREATE TABLE chat_messages (
     sort key(timestamp)
 );
 ```
+### EVI Tool Configuration
+Full tool setup instructions can be found in the [EVI docs](https://dev.hume.ai/docs/empathic-voice-interface-evi/tool-use#setup).
+- Create a new tool `fetch_health_metrics` with the following schema
+```json
+{
+   "type":"object",
+   "required":["patient_id"],
+   "properties":{
+      "patient_id":{
+         "type":"integer",
+         "description":"Unique identifier for the patient whose metrics were fetched."
+      },
+      "metrics":{
+         "type":"array",
+         "description":"List of health metrics to fetch. Possible values include 'heart_rate', 'blood_pressure','glucose_level', and 'activity_level'.",
+         "items":{
+            "type":"string",
+            "enum":[
+               "heart_rate",
+               "blood_pressure",
+               "glucose_level",
+               "activity_level"
+            ]
+         }
+      }
+   }
+}
+```
+- Create a configuration `Health Metrics Config` that will utilize the `fetch_health_metrics` tool.
+- Retrieve the `configuration ID` and pass it to your `.env` file
 
 ## Prerequisites
 - Python 3.9 or 3.11 (Python 3.12 has incompatibility issues with the Hume SDK)
@@ -105,16 +135,16 @@ Hey, EVI. I’m not feeling too well at the moment.
 EVI:
 I’m sorry to hear that. Let me check on your health metrics to see how you’re doing physically.
 
-(calls the `fetch_health_metrics` tool to fetch real-time vitals data from SingleStore)
+[calls the `fetch_health_metrics` tool to fetch real-time vitals data from SingleStore]
 
 EVI:
-I noticed your average heart rate in the last hour has been 92 bpm, which is quite elevated compared to your usual baseline. Your glucose level is at 145 mg/dL, which is also on the higher side.
-
+I noticed your average heart rate in the last hour has been 92 bpm, which is quite elevated compared to your usual baseline. 
+Your glucose level is at 145 mg/dL, which is also on the higher side.
 Stress can sometimes affect your heart rate and glucose levels. How about trying a short breathing exercise to help you relax?
 ```
 
 ## Next Steps
-There are definitely opportunities to expand the functionality of Empathic Health Companion around real-time healthcare insights! Here are some of them:
+There are definitely opportunities to expand the functionality of Empathic Health Companion, especially around real-time healthcare insights! Here are some ideas:
 
 ### Correlation Analysis:
 - Analyze relationships between detected emotions and health metrics.
