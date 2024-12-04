@@ -61,6 +61,7 @@ cd empathic-health-companion
 ```
 
 2. Set Up Python Environment
+
 Create and activate a Python virtual environment:
 
 ```bash
@@ -98,8 +99,25 @@ python main.py
 Start a conversation via the terminal. Example:
 ```
 You: Hey, EVI.
-Assistant: Let me check on your current health status to better understand how you're feeling.
+Assistant: Hey there! You sound a bit down and tired? Let me check on your current health status to better understand how you're feeling.
 Tool calls (e.g., get_health_metrics) fetch user-specific health insights and provide personalized advice.
 ```
 
+## Next Steps
+A few opportunities to expand the functionality of Empathic Health Companion around real-time healthcare insights:
 
+### Correlation Analysis:
+- Analyze relationships between detected emotions and health metrics.
+- Example: Calculate average glucose levels or heart rates when a user's mood is classified as "angry" or "distressed."
+
+### Full-Text Search on Historical Data:
+- Leverage SingleStore's full-text search capabilities to query historical user conversations.
+- Example: Find all instances where users expressed "sadness" and analyze associated health data trends.
+
+### Historical Trend Analysis:
+- Enable time-series analysis of emotional patterns and health metrics.
+- Example: Generate reports showing fluctuations in emotional states alongside blood pressure or activity levels over a week.
+
+### Sentiment-Based Alerts:
+- Create automated alerts for caregivers or clinicians when specific emotional states or vitals exceed thresholds.
+- Example: Notify a healthcare provider if the user is consistently detected as "angry" with rising blood pressure.
