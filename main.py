@@ -87,6 +87,28 @@ class WebSocketHandler:
             print(f"Unknown tool: {tool_name}")
             return None
 
+    async def insert_messages(messages):
+        s2_conn = s2.connect()
+        s2_cur = s2_conn.cursor()
+        try:
+            for message in messages:
+                query = """
+                INSERT INTO chat_messages (event_id, chat_id, timestamp, emotion_features, message_text)
+                VALUES (%s, %s, FROM_UNIXTIME(%s), %s, %s)
+                ON DUPLICATE KEY UPDATE message_text = VALUES(message_text);
+                """
+                s2_cur.execute(query,(
+                    message["id"],
+                    message["chat_id"],
+                    message["timestamp"] / 1000,  # Convert milliseconds to seconds
+                    message["emotion_features"],
+                    message["message_text"]
+                ))
+                s2_conn.commit()
+        finally:
+            s2_conn.close() 
+            
+    
     async def on_open(self):
         """Logic invoked when the WebSocket connection is opened."""
         print("WebSocket connection opened.")
@@ -94,17 +116,36 @@ class WebSocketHandler:
     async def on_message(self, message: SubscribeEvent):
         # Create an empty dictionary to store expression inference scores
         scores = {}
-        print(message)
 
         if message.type == "chat_metadata":
             message_type = message.type.upper()
             chat_id = message.chat_id
             chat_group_id = message.chat_group_id
             text = f"<{message_type}> Chat ID: {chat_id}, Chat Group ID: {chat_group_id}"
-        elif message.type in ["user_message", "assistant_message"]:
-            role = message.message.role.upper()
+        elif message.type == "user_message":
+            # Extract relevant data from the user message
+            event_id = message.id
+            chat_id = message.chat_id
+            timestamp = message.timestamp
+            message_text = message.content
+            emotion_features = message.models.prosody.scores 
+
+            # Prepare the message dictionary
+            user_message = {
+                "id": event_id,
+                "chat_id": chat_id,
+                "timestamp": timestamp,
+                "emotion_features": json.dumps(emotion_features),  # Store as JSON string
+                "message_text": message_text
+            }
+
+            # Insert the message into the database
+            await self.insert_messages([user_message])
+            print(f"Inserted user message {event_id} into chat_messages table.")
+            text = f"USER: {message_text}"
+        elif message.type == "assistant_message":
             message_text = message.message.content
-            text = f"{role}: {message_text}"
+            text = f"ASSISTANT: {message_text}"
             if message.from_text is False:
                 scores = dict(message.models.prosody.scores)
         elif message.type == "tool_call":
